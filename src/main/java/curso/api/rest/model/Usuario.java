@@ -39,7 +39,6 @@ public class Usuario implements UserDetails{
 			columnNames = {"usuario_id","role_id"}, name = "unique_role_user"),
 	joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id", table = "usuario" , unique = false,
 	foreignKey = @ForeignKey(name = "usuario_fk", value = ConstraintMode.CONSTRAINT)),
-
 	inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id", table = "role", unique = false, updatable = false,
 	   foreignKey = @ForeignKey(name = "role_fk", value = ConstraintMode.CONSTRAINT)))
 	private List<Role> roles; // acessos do usuario
@@ -112,7 +111,7 @@ public class Usuario implements UserDetails{
 		return true;
 	}
 
-	//Retorna uma lista de acessos do usuario. ROLE_ADM ou ROLE_SALE
+	//Retorna uma lista de autorizacoes do usuario. ROLE_ADM ou ROLE_SALE
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return roles;
