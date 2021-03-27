@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +62,7 @@ public class UsuarioController {
 		return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
 	}	
 	
- 	@CrossOrigin(origins = "*")
+/*	@CrossOrigin(origins = "*")
 	@GetMapping(value = "/", produces = "application/json")
 	public ResponseEntity<List<Usuario>> usuarios(){
 		
@@ -68,27 +70,26 @@ public class UsuarioController {
 		
 		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
 	}
-	
+	*/
+
 	/* Exemplo de como trabalhar com Cache
    
-	  Vamos supor que o carregamento do usuário seja um processo lento
-	  e queremoms controlar ele em cache para agilizar o processo
+	Vamos supor que o carregamento do usuário seja um processo lento
+	  e queremoms controlar ele em cache para agilizar o processo*/
 
 	@CrossOrigin(origins = "*")
 	@GetMapping(value = "/", produces = "application/json")
-	@Cacheable("cacheusuarios")
+	//@Cacheable("cacheusuarios") //ativa o cache
+	@CacheEvict(value = "cacheusuarios", allEntries = true) //remove o cache
+	@CachePut("cacheusuarios") //identifica novas atualizacoes e coloca no cache
 	public ResponseEntity<List<Usuario>> usuarios(){
 		
 		List<Usuario> list = (List<Usuario>) usuarioRepository.findAll();
 		
-		try {
-			Thread.sleep(6000); // seguro o código por 6 segundo, simulando o processo lento
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		//Thread.sleep(6000); // seguro o código por 6 segundo, simulando o processo lento
 		
 		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
-	}*/
+	}
 	
 	
 	@PostMapping(value = "/", produces = "application/json")
