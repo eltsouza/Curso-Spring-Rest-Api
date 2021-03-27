@@ -40,13 +40,24 @@ public class UsuarioController {
 	}
 	
 	/*Serviço RESTful*/
-	@GetMapping(value = "/{id}", produces = "application/json")
-	public ResponseEntity<Usuario> init(@PathVariable(value = "id") Long id) {
+	@GetMapping(value = "/{id}", produces = "application/json" , headers = "X-API-Version=v1") //segunda forma de versionamento da URI
+//	@GetMapping(value = "v1/{id}", produces = "application/json") //primeira forma de versionamento da URI
+	public ResponseEntity<Usuario> initV1(@PathVariable(value = "id") Long id) {
 		
         Optional<Usuario>  usuario  = usuarioRepository.findById(id);
-		
+		System.out.println("Executando a versão 1 da API");
 		return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
 	}
+	
+	/*Serviço RESTful*/
+	@GetMapping(value = "/{id}", produces = "application/json" , headers = "X-API-Version=v2") //segunda forma de versionamento da URI
+//	@GetMapping(value = "v2/{id}", produces = "application/json") //primeira forma de versionamento da URI
+	public ResponseEntity<Usuario> initV2(@PathVariable(value = "id") Long id) {
+		
+        Optional<Usuario>  usuario  = usuarioRepository.findById(id);
+		System.out.println("Executando a versão 2 da API");
+		return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+	}	
 	
 	@CrossOrigin(origins = "*")
 	@GetMapping(value = "/", produces = "application/json")
