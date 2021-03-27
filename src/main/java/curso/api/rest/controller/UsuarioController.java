@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,6 +65,8 @@ public class UsuarioController {
 			usuario.getTelefones().get(pos).setUsuario(usuario);
 		}
 		
+		String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
+		usuario.setSenha(senhaCriptografada);
 		Usuario usuarioSalvo = usuarioRepository.save(usuario);
 		
 		return new ResponseEntity<Usuario>(usuarioSalvo,HttpStatus.OK);
@@ -90,6 +93,19 @@ public class UsuarioController {
 			usuario.getTelefones().get(pos).setUsuario(usuario);
 		}
 		
+		Usuario userTemporario = usuarioRepository.findUserByLogin(usuario.getLogin());
+		
+		System.out.println("userTemporario.getSenha()." +userTemporario.getSenha());
+		System.out.println("usuario.getSenha()." +usuario.getSenha());
+		System.out.println("usuario.getSenha() cript." + new BCryptPasswordEncoder().encode(usuario.getSenha()));
+		
+		//senhas diferentes está negando
+		if(!userTemporario.getSenha().equals(usuario.getSenha())) {
+			String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
+			usuario.setSenha(senhaCriptografada);	
+			System.out.println("caiu IF");
+		}
+			
 		Usuario usuarioSalvo = usuarioRepository.save(usuario);
 		
 		return new ResponseEntity<Usuario>(usuarioSalvo,HttpStatus.OK);

@@ -79,6 +79,7 @@ public class JWTTokenAutenticacaoService {
 						   usuario.getLogin(), usuario.getSenha(),usuario.getAuthorities());
 				}
 			}
+		System.out.println("TOKEN..:"+ token);
 		}
 		return null ; /*Nao Autorizado*/
 		
