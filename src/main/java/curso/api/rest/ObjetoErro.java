@@ -23,5 +23,7 @@ public class ObjetoErro {
 		return code;
 	}
 	
+	
+	
 
 }

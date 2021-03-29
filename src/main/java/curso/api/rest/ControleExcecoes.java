@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ControleExcecoes extends ResponseEntityExceptionHandler {
 
+	//mapear os erros mais comuns da API
 	@ExceptionHandler({Exception.class, RuntimeException.class, Throwable.class}) //captura todas exception da classe
 	@Override
 	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
