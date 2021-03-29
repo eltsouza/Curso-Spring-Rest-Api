@@ -64,31 +64,36 @@ public class JWTTokenAutenticacaoService {
 		/*Pega o Token enviado no cabecalho HTTP*/		
 		String token = request.getHeader(HEADER_STRING);
 		
-		if (token != null) {
-			
-			String tokenSemBearer = token.replace(TOKEN_PREFIX, "").trim();
-			
-			/*Faz a validacao do Token do usuario na requisicao*/
-			String user = Jwts.parser().setSigningKey(SECRET) // Bearer 3213219adsdsa921321321sdsa
-					          .parseClaimsJws(tokenSemBearer) //3213219adsdsa921321321sdsa
-					          .getBody().getSubject();//Elton
-			
-			if(user != null) {
-				
-				Usuario usuario = ApplicationContextLoad.getApplicationContext()
-						.getBean(UsuarioRepository.class).findUserByLogin(user);
-				
-				if (usuario != null) {
-					
-					if (tokenSemBearer.equalsIgnoreCase(usuario.getToken())) {
-     					System.out.println("TOKEN..:"+ token);
-			  		    return new UsernamePasswordAuthenticationToken(
-							   usuario.getLogin(), usuario.getSenha(),usuario.getAuthorities());	
+		try {
+			if (token != null) {
+
+				String tokenSemBearer = token.replace(TOKEN_PREFIX, "").trim();
+
+				/*Faz a validacao do Token do usuario na requisicao*/
+				String user = Jwts.parser().setSigningKey(SECRET) // Bearer 3213219adsdsa921321321sdsa
+						.parseClaimsJws(tokenSemBearer) //3213219adsdsa921321321sdsa
+						.getBody().getSubject();//Elton
+
+				if(user != null) {
+
+					Usuario usuario = ApplicationContextLoad.getApplicationContext()
+							.getBean(UsuarioRepository.class).findUserByLogin(user);
+
+					if (usuario != null) {
+
+						if (tokenSemBearer.equalsIgnoreCase(usuario.getToken())) {
+							System.out.println("TOKEN..:"+ token);
+							return new UsernamePasswordAuthenticationToken(
+									usuario.getLogin(), usuario.getSenha(),usuario.getAuthorities());	
+						}
 					}
 				}
-			}
+			}//fim IF token != null
+		} catch (io.jsonwebtoken.ExpiredJwtException e) {
+           try {
+			response.getOutputStream().println("Seu TOKEN está expirado. Faça o login ou informe um novo TOKEN de autenticação");
+		} catch (IOException e1) { }		    
 		}
-		
 		liberacaoCors(response);
 		
 		return null ; /*Nao Autorizado*/
