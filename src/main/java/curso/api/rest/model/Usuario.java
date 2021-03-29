@@ -38,6 +38,7 @@ public class Usuario implements UserDetails{
 	private String login;	
 	private String nome;
 	private String senha;
+	private String token = "";
 
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "usuarios_role", uniqueConstraints = @UniqueConstraint(
@@ -50,6 +51,14 @@ public class Usuario implements UserDetails{
 
 	@OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Telefone> telefones = new ArrayList<Telefone>();
+	
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
+	public String getToken() {
+		return token;
+	}
 	
 	public List<Telefone> getTelefones() {
 		return telefones;

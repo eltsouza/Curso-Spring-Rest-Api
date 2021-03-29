@@ -63,9 +63,11 @@ public class JWTTokenAutenticacaoService {
 		
 		if (token != null) {
 			
+			String tokenSemBearer = token.replace(TOKEN_PREFIX, "").trim();
+			
 			/*Faz a validacao do Token do usuario na requisicao*/
 			String user = Jwts.parser().setSigningKey(SECRET) // Bearer 3213219adsdsa921321321sdsa
-					          .parseClaimsJws(token.replace(TOKEN_PREFIX, "")) //3213219adsdsa921321321sdsa
+					          .parseClaimsJws(tokenSemBearer) //3213219adsdsa921321321sdsa
 					          .getBody().getSubject();//Elton
 			
 			if(user != null) {
@@ -74,12 +76,14 @@ public class JWTTokenAutenticacaoService {
 						.getBean(UsuarioRepository.class).findUserByLogin(user);
 				
 				if (usuario != null) {
-			      
-				   return new UsernamePasswordAuthenticationToken(
-						   usuario.getLogin(), usuario.getSenha(),usuario.getAuthorities());
+					
+					if (tokenSemBearer.equalsIgnoreCase(usuario.getToken())) {
+     					System.out.println("TOKEN..:"+ token);
+			  		    return new UsernamePasswordAuthenticationToken(
+							   usuario.getLogin(), usuario.getSenha(),usuario.getAuthorities());	
+					}
 				}
 			}
-		System.out.println("TOKEN..:"+ token);
 		}
 		return null ; /*Nao Autorizado*/
 		
