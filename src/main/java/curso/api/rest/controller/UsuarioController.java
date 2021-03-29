@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import curso.api.rest.model.Usuario;
+import curso.api.rest.model.UsuarioDTO;
 import curso.api.rest.repository.UsuarioRepository;
 
 @CrossOrigin(origins = "*") // libera acesso do END POINT de 1 ou todas origem
@@ -45,11 +46,11 @@ public class UsuarioController {
 	/*Serviço RESTful*/
 	@GetMapping(value = "/{id}", produces = "application/json" , headers = "X-API-Version=v1") //segunda forma de versionamento da URI
 //	@GetMapping(value = "v1/{id}", produces = "application/json") //primeira forma de versionamento da URI
-	public ResponseEntity<Usuario> initV1(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<UsuarioDTO> initV1(@PathVariable(value = "id") Long id) {
 		
         Optional<Usuario>  usuario  = usuarioRepository.findById(id);
 		System.out.println("Executando a versão 1 da API");
-		return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+		return new ResponseEntity<UsuarioDTO>(new UsuarioDTO(usuario.get()), HttpStatus.OK);
 	}
 	
 	/*Serviço RESTful*/
