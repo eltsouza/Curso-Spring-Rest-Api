@@ -1,5 +1,12 @@
 package curso.api.rest.controller;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.Buffer;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +26,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.google.gson.Gson;
 
 import curso.api.rest.model.Usuario;
 import curso.api.rest.model.UsuarioDTO;
@@ -94,12 +103,36 @@ public class UsuarioController {
 	
 	
 	@PostMapping(value = "/", produces = "application/json")
-	public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario){
+	public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) throws Exception{
 		
 		//Relaciona o telefone ao usuario para cadastrar.
 		for (int pos = 0; pos < usuario.getTelefones().size(); pos ++) {
 			usuario.getTelefones().get(pos).setUsuario(usuario);
 		}
+		
+		//Consumindo API publica exeterna
+		
+		URL url  = new URL("https://viacep.com.br/ws/"+usuario.getCep()+"/json/");
+		URLConnection connection = url.openConnection();
+		InputStream is = connection.getInputStream();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+		
+		String cepAux = "";
+		StringBuilder jsonCep = new StringBuilder();
+		
+		while((cepAux = br.readLine()) != null) {
+			jsonCep.append(cepAux);
+		}
+		
+		System.out.println(jsonCep.toString());
+		
+		Usuario userAux = new Gson().fromJson(jsonCep.toString(), Usuario.class);
+		usuario.setCep(userAux.getCep());
+		usuario.setLogradouro(userAux.getLogradouro());
+		usuario.setComplemento(userAux.getComplemento());
+		usuario.setBairro(userAux.getBairro());
+		usuario.setLocalidade(userAux.getLocalidade());
+		usuario.setUf(userAux.getUf());
 		
 		String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
 		usuario.setSenha(senhaCriptografada);
